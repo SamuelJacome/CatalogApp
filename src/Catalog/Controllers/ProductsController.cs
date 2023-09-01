@@ -1,10 +1,13 @@
 using Catalog.Data;
+using Catalog.Extension;
 using Catalog.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Controllers
 {
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly AppDbContext _context;
@@ -18,7 +21,7 @@ namespace Catalog.Controllers
                         View(await _context.Products.ToListAsync()) :
                         Problem("Entity set 'AppDbContext.Produtos'  is null.");
         }
-
+        [ClaimsAuthorize("Product", "R")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Products == null)
@@ -35,7 +38,7 @@ namespace Catalog.Controllers
 
             return View(produto);
         }
-
+        [ClaimsAuthorize("Product", "C")]
         public IActionResult Create()
         {
             return View();
@@ -43,6 +46,7 @@ namespace Catalog.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ClaimsAuthorize("Product", "C")]
         public async Task<IActionResult> Create([Bind("Id,Nome,Imagem,Valor")] Product product)
         {
             if (ModelState.IsValid)
@@ -71,6 +75,7 @@ namespace Catalog.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ClaimsAuthorize("Product", "U")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Imagem,Valor")] Product product)
         {
             if (id != product.Id)
@@ -101,7 +106,7 @@ namespace Catalog.Controllers
             return View(product);
         }
 
-
+        [ClaimsAuthorize("Product", "D")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Products == null)
@@ -120,6 +125,7 @@ namespace Catalog.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [ClaimsAuthorize("Product", "D")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
