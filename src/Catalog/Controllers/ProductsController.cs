@@ -47,10 +47,16 @@ namespace Catalog.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimsAuthorize("Product", "C")]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Imagem,Valor")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Nome,ImageUpload,Valor")] Product product)
         {
             if (ModelState.IsValid)
             {
+                var imgPrefixo = Guid.NewGuid() + "_";
+                if (!await UploadArquivo(product.ImageUpload, imgPrefixo))
+                {
+                    return View(product);
+                }
+                product.Image = imgPrefixo + product.ImageUpload.FileName;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -146,6 +152,25 @@ namespace Catalog.Controllers
         private bool ProdutoExists(int id)
         {
             return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        private async Task<bool> UploadArquivo(IFormFile file, string imgPrefixo)
+        {
+            if (file.Length <= 0) return false;
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", imgPrefixo + file.FileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "Já existe um file com este nome!");
+                return false;
+            }
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return true;
         }
     }
 }

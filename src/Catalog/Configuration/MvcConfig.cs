@@ -1,5 +1,6 @@
 
 using Catalog.Data;
+using Catalog.Extension;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -13,12 +14,16 @@ namespace Catalog.Configuration
             builder.Services.AddControllersWithViews(_ =>
                 {
                     _.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                    _.Filters.Add(typeof(FilterAudit));
                 }
             );
 
-            builder.Services.AddDbContext<AppDbContext>(o =>
-                o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddDbContext<AppDbContext>(_ =>
+                _.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.Configure<ApiConfiguration>(
+                builder.Configuration.GetSection(ApiConfiguration.ConfigName)
+            );
             return builder;
         }
 
