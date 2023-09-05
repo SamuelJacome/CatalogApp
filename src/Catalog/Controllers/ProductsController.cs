@@ -47,12 +47,12 @@ namespace Catalog.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimsAuthorize("Product", "C")]
-        public async Task<IActionResult> Create([Bind("Id,Nome,ImageUpload,Valor")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,ImageUpload,Value")] Product product)
         {
             if (ModelState.IsValid)
             {
                 var imgPrefixo = Guid.NewGuid() + "_";
-                if (!await UploadArquivo(product.ImageUpload, imgPrefixo))
+                if (!await UploadArquivo(product?.ImageUpload, imgPrefixo))
                 {
                     return View(product);
                 }
@@ -82,17 +82,27 @@ namespace Catalog.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimsAuthorize("Product", "U")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Imagem,Valor")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImageUpload,Value")] Product product)
         {
             if (id != product.Id)
             {
                 return NotFound();
             }
-
+            var productDb = await _context.Products.AsNoTracking().FirstOrDefaultAsync(_ => _.Id == id);
             if (ModelState.IsValid)
             {
                 try
                 {
+                    product.Image = productDb?.Image;
+                    if (product.ImageUpload is not null)
+                    {
+                        var imgPrefixo = Guid.NewGuid() + "_";
+                        if (!await UploadArquivo(product.ImageUpload, imgPrefixo))
+                        {
+                            return View(product);
+                        }
+                        product.Image = imgPrefixo + product.ImageUpload.FileName;
+                    }
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -122,6 +132,7 @@ namespace Catalog.Controllers
 
             var produto = await _context.Products
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (produto == null)
             {
                 return NotFound();
@@ -172,5 +183,6 @@ namespace Catalog.Controllers
 
             return true;
         }
+
     }
 }

@@ -36,6 +36,254 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         {
             <tr>
                 <td>
@@ -49,7 +297,7 @@
                 </td>
                 <td>
                     <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#detalhesModal"
-                        data-image="@item.Image" data-id="@item.Id" data-name="@item.Name" data-value="@item.Value">
+                        data-imagem="@item.Image" data-id="@item.Id" data-nome="@item.Name" data-valor="@item.Value">
                         <spam class="fa fa-search"></spam>
                     </button>
                     <botao type-button="Details" route-id="@item.Id"></botao>
@@ -63,6 +311,9 @@
                 </td>
             </tr>
         }
+        <form id="antiForgeryForm" method="post">
+            @Html.AntiForgeryToken()
+        </form>
     </tbody>
 </table>
 
@@ -114,6 +365,8 @@
     </div>
 </div>
 
+
+
 @section Scripts {
 
     <script>
@@ -121,10 +374,10 @@
             $('#detalhesModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Botão que acionou o modal
                 var id = button.data('id'); // Extraia informações dos atributos data-*
-                var nome = button.data('name');
-                var valor = button.data('value');
-                var imagem = button.data('image');
-
+                var nome = button.data('nome');
+                var valor = button.data('valor');
+                var imagem = button.data('imagem');
+                console.log("hello");
                 // Atualize o conteúdo do modal
                 $('#produtoId').text(id);
                 $('#produtoNome').text(nome);

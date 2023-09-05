@@ -8,7 +8,7 @@ namespace Catalog.Extension
         //After
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            if (context.HttpContext.User.Identity.IsAuthenticated)
+            if (context.HttpContext.User.Identity is not null && context.HttpContext.User.Identity.IsAuthenticated)
             {
                 var message = context.HttpContext.User.Identity.Name + " Acessou: " +
                                 context.HttpContext.Request.GetDisplayUrl();

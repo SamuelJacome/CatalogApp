@@ -18,7 +18,7 @@ namespace Catalog.Extension
 
         private string? nameAction;
         private string? nameClass;
-        private string? spanIcon;
+        private string spanIcon = string.Empty;
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {

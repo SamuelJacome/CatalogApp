@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form enctype="multipart/form-data" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -18,12 +18,21 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
+
+                <label>Imagem Atual</label><br />
+
+                <img src="~/images/@Model.Image" alt="@Model.Image" style="width: 70px; height: 100px" />
+
             </div>
-            <div class="form-group">
+            <div class="input-group custom-file-button">
+
+
+                <input type="file" class="form-control" id="ImagemUpload" asp-for="ImageUpload">
+                <label class="input-group-text" for="ImagemUpload">Escolher</label>
+            </div>
+            <div class=" form-group">
                 <label asp-for="Value" class="control-label"></label>
                 <input asp-for="Value" class="form-control" />
                 <span asp-validation-for="Value" class="text-danger"></span>
