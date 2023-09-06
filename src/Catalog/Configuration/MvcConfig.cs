@@ -1,6 +1,7 @@
 
 using Catalog.Data;
 using Catalog.Extension;
+using Catalog.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -24,6 +25,9 @@ namespace Catalog.Configuration
             builder.Services.Configure<ApiConfiguration>(
                 builder.Configuration.GetSection(ApiConfiguration.ConfigName)
             );
+
+            builder.Services.AddHostedService<ImageWatermarkService>();
+
             return builder;
         }
 

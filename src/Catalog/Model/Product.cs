@@ -12,5 +12,6 @@ namespace Catalog.Model
         public IFormFile? ImageUpload { get; set; }
         public string? Image { get; set; }
         public string? Value { get; set; }
+        public bool MarkedImageWatermark { get; set; }
     }
 }
