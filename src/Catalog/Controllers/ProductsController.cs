@@ -1,6 +1,7 @@
 using Catalog.Data;
 using Catalog.Extension;
 using Catalog.Model;
+using Catalog.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,13 @@ namespace Catalog.Controllers
     public class ProductsController : Controller
     {
         private readonly AppDbContext _context;
-        public ProductsController(AppDbContext context)
+        private readonly IImageUploadService _imageUploadService;
+
+        public ProductsController(AppDbContext context, IImageUploadService imageUploadService)
         {
             _context = context;
+            _imageUploadService = imageUploadService;
+
         }
         public async Task<IActionResult> Index()
         {
@@ -52,7 +57,7 @@ namespace Catalog.Controllers
             if (ModelState.IsValid)
             {
                 var imgPrefixo = Guid.NewGuid() + "_";
-                if (!await UploadArquivo(product?.ImageUpload, imgPrefixo))
+                if (!await _imageUploadService.UploadArquivo(ModelState, product?.ImageUpload, imgPrefixo))
                 {
                     return View(product);
                 }
@@ -97,7 +102,7 @@ namespace Catalog.Controllers
                     if (product.ImageUpload is not null)
                     {
                         var imgPrefixo = Guid.NewGuid() + "_";
-                        if (!await UploadArquivo(product.ImageUpload, imgPrefixo))
+                        if (!await _imageUploadService.UploadArquivo(ModelState, product?.ImageUpload, imgPrefixo))
                         {
                             return View(product);
                         }
@@ -164,25 +169,5 @@ namespace Catalog.Controllers
         {
             return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-        private async Task<bool> UploadArquivo(IFormFile file, string imgPrefixo)
-        {
-            if (file.Length <= 0) return false;
-
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", imgPrefixo + file.FileName);
-
-            if (System.IO.File.Exists(path))
-            {
-                ModelState.AddModelError(string.Empty, "Já existe um file com este nome!");
-                return false;
-            }
-
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            return true;
-        }
-
     }
 }
