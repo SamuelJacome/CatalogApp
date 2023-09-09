@@ -24,7 +24,6 @@ namespace Catalog.Tests
             Assert.IsType<ViewResult>(result);
         }
 
-
         [Fact]
         public void ProductController_Index_Sucess()
         {

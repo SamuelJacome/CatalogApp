@@ -49,6 +49,8 @@ namespace Catalog.Configuration
             );
 
             app.MapRazorPages();
+
+            DbMigrationHelper.EnsureSeedData(app).Wait();
             return app;
         }
 
